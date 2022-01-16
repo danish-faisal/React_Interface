@@ -6,6 +6,16 @@ import Search from './components/Search';
 
 function App() {
   let [appointmentsList, setAppointMentsList] = useState([]);
+  let [query, setQuery] = useState('');
+
+  // ??
+  const filteredAppointments = appointmentsList.filter(item => {
+    return (
+      item.petName.toLowerCase().includes(query.toLowerCase()) ||
+      item.ownerName.toLowerCase().includes(query.toLowerCase()) ||
+      item.aptNotes.toLowerCase().includes(query.toLowerCase())
+    );
+  });
 
   const fetchData = useCallback(() => {
     fetch('./data.json')
@@ -23,11 +33,11 @@ function App() {
         <BiCalendar className="inline-block text-red-400 align-top" />Your Appointments
       </h1>
       <AddAppointment />
-      <Search />
+      <Search query={query} onQueryChange={myQuery => setQuery(myQuery)} />
 
       <ul className="divide-y divide-gray-200">
         {
-          appointmentsList.map(appointment => <AppointmentInfo key={appointment.id} appointment={appointment}
+          filteredAppointments.map(appointment => <AppointmentInfo key={appointment.id} appointment={appointment}
             onDeleteAppointment={(appointMentId) =>
               setAppointMentsList((appointmentsList).filter((appointment) => appointment.id !== appointMentId))
             } />)
